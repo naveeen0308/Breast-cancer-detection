@@ -45,7 +45,7 @@ python breast_cancer_classification_v1.py
 ```
 - The script will load the dataset, preprocess the features, train the AdaBoost model, and display the evaluation metrics such as accuracy, confusion matrix, and classification report.
 
-## **Version 2
+## **Version 2**
 Version 2 enhances the project by integrating Streamlit to provide an interactive web interface. Users can adjust feature values through the sidebar and receive real-time predictions, including prediction probabilities. The model also displays important features, a correlation heatmap, and actual vs predicted values with colored visuals.
 
 # **How to Run (Version 2)**
