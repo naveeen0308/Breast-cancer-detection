@@ -5,6 +5,8 @@ import plotly.express as px
 import plotly.graph_objs as go
 import joblib
 import seaborn as sns
+import requests
+from io import BytesIO
 import matplotlib.pyplot as plt
 from sklearn.metrics import (
     roc_curve, auc, confusion_matrix, 
@@ -23,69 +25,99 @@ class BreastCancerDetectionApp:
         self.load_resources()
 
     def setup_page(self):
-        st.markdown("""
+        # Option to change background color
+        bg_color = st.sidebar.selectbox("Select Background Color", ["Grey", "White", "Light Blue", "Light Green", "Light Yellow", "Light Grey", "Light Pink"])
+        if bg_color == "Grey":
+            bg_color_code = "#F4F6F7"
+        elif bg_color == "White":
+            bg_color_code = "#FFFFFF"
+        elif bg_color == "Light Blue":
+            bg_color_code = "#E3F2FD"
+        elif bg_color == "Light Green":
+            bg_color_code = "#E8F5E9"
+        elif bg_color == "Light Yellow":
+            bg_color_code = "#FFFDE7"
+        elif bg_color == "Light Grey":
+            bg_color_code = "#F5F5F5"
+        elif bg_color == "Light Pink":
+            bg_color_code = "#FCE4EC"
+
+        st.markdown(f"""
         <style>
-        .main-header {
+        .main-header {{
             background: linear-gradient(135deg, #2C3E50 0%, #3498DB 100%);
             color: white;
             padding: 20px;
             text-align: center;
             border-radius: 10px;
             margin-bottom: 20px;
-        }
-        .stApp {
-            background-color: #F4F6F7;
-        }
-        .metric-container {
+        }}
+        .stApp {{
+            background-color: {bg_color_code};
+        }}
+        .metric-container {{
             background: white;
             border-radius: 15px;
             padding: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: transform 0.3s;
             border: 1px solid #E0E0E0;
-        }
-        .metric-container:hover {
+        }}
+        .metric-container:hover {{
             transform: scale(1.05);
             box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        }
-        .prediction-card {
+        }}
+        .prediction-card {{
             background: white;
             border-radius: 20px;
             padding: 25px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.1);
             margin: 20px 0;
-        }
-        .developer-section {
+        }}
+        .developer-section {{
             background-color: #F8F9F9;
             border-radius: 10px;
             padding: 20px;
             margin-top: 20px;
-        }
-        .stTabs [data-baseweb="tab-list"] {
+        }}
+        .stTabs [data-baseweb="tab-list"] {{
             gap: 24px;
-        }
-        .stTabs [data-baseweb="tab"] {
+        }}
+        .stTabs [data-baseweb="tab"] {{
             padding: 10px 24px;
             background: white;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .stTabs [data-baseweb="tab-panel"] {
+        }}
+        .stTabs [data-baseweb="tab-panel"] {{
             padding: 20px;
             background: white;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-        }
+        }}
         </style>
         """, unsafe_allow_html=True)
 
     def load_resources(self):
         @st.cache_resource
         def load_model_data(_self):
-            model = joblib.load("adaboost_model_with_smote_on_imputed_data.pkl")
-            scaler = joblib.load("scaler.pkl")
-            data = joblib.load("data_metadata_with_smote_on_imputed_data.pkl")
-            feature_names = joblib.load("feature_names.pkl")
+            model_url = "adaboost_model_with_smote_on_original_data.pkl"
+            scaler_url = "scaler.pkl"
+            data_url = "data_metadata_with_smote_on_original_data.pkl"
+            feature_names_url = "feature_names.pkl"
+    
+            # Helper function to load a pickle file from a URL
+            def load_pickle_from_url(url):
+                response = requests.get(url)
+                response.raise_for_status()  # Ensure the request was successful
+                return joblib.load(BytesIO(response.content))  # Load from in-memory bytes
+    
+            # Load all files
+            model = load_pickle_from_url(model_url)
+            scaler = load_pickle_from_url(scaler_url)
+            data = load_pickle_from_url(data_url)
+            feature_names = load_pickle_from_url(feature_names_url)
+    
             return model, scaler, data, feature_names
 
         self.model, self.scaler, self.data, self.feature_names = load_model_data(self)
@@ -383,20 +415,37 @@ class BreastCancerDetectionApp:
         st.markdown("### 👨‍💻 Developer Information")
 
         # Create two columns for developer information
-        col1, col2 = st.columns(2)
+        col1, col2, col3, col4, col5 = st.columns(5)
 
         with col1:
             st.markdown("🧑🏻‍💻 Naveen S")
             st.markdown("📞 Contact: +91 7448863062")
             st.markdown("📧 Email: snaveen8105@gmail.com")
-            st.markdown("Github: [Click here!](https://github.com/naveenk03)")
-            st.markdown("Linkedin: [Click here!](https://www.linkedin.com/in/naveen-k-data-scientist/)")
+            st.markdown("Github: [Click here!](https://github.com/naveeen0308/Breast-cancer-detection)")
+            st.markdown("Linkedin: [Click here!](https://www.linkedin.com/in/naveen-s-a70854268/)")
 
         with col2:
             st.markdown("🧑🏻‍💻 B.Krishna Raja Sree")
             st.markdown("📧 Email: 22b01a4609@svecw.edu.in")
             st.markdown("Github: [Click here!](https://github.com/krishnasree76/)")
             st.markdown("Linkedin: [Click here!](https://www.linkedin.com/in/krishna-raja-sree-bonam-7b6079257/)")
+            
+        with col3:
+            st.markdown("🧑🏻‍💻 Joseph Boban")
+            st.markdown("📧 Email: joseph.dm254031@greatlakes.edu.in")
+            st.markdown("Github: [Click here!](https://github.com/josephboban2000)")
+            st.markdown("Linkedin: [Click here!](https://www.linkedin.com/in/josephboban/)")
+         
+        with col4:
+            st.markdown("🧑🏻‍💻 Shaik Ayesha Parveen")
+            st.markdown("📧 Email: ayeshparveen25@gmail.com")
+            st.markdown("Github: [Click here!](https://github.com/ShaikAyeshaparveen25/)")
+        with col5:
+            st.markdown("🧑🏻‍💻 Gayathri R")
+            st.markdown("📧 Email: gayathri.22ad@kct.ac.in")
+            st.markdown("Github: [Click here!](https://github.com/Gayathri-R-04/)")    
+                        
+                       
 
 def main():
     app = BreastCancerDetectionApp()
