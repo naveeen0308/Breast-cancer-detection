@@ -52,7 +52,7 @@ The **Streamlit web app** enhances user interaction with features like dynamic s
    ```
 4. Launch the Streamlit app:
    ```bash
-   streamlit run Streamlit_app_2_final.py
+   streamlit run Streamlit_App.py
    ```
 5. Open the app in your browser and explore the diagnostic tool!
 
